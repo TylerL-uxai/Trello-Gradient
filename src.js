@@ -68,15 +68,15 @@ updateLocalStorage();
 // create lists
 function createLists(callback){
   initData.map(function (list,index) {
-
+    initData[index].order = index;
     if (index < 3){
       //console.log('create lists...', $('.selectList'+index));
     $('#container')
      .append(
      '<div class=\"list-wrapper list-num'+list.order+'\"><ul id=\"sortable'+list.order+'\" class=\"connectedSortable\"><div class=\"list-title\"><select class=\"selectList'+list.order+' options\"><option value="-1" selected>Choose a list...</option></select><div class="new-list inline-list">+ New List</div></div></ul></div>');
-
-    createListItems(list.order);
-    initCardComment(list.order);
+     console.log('list order...', list.order);
+    createListItems(index);
+    initCardComment(index);
 
     }
     });
@@ -87,13 +87,17 @@ function createLists(callback){
 }
 
 function createListItems(listNumber){
-  initData[listNumber].body.forEach(function(item){
-    if (item.order < 10) {
-    $('#sortable'+listNumber).append('<li style=\"background-color: hsl(202, 100%,'+(38+item.order*2)+'%)\" class=\"list-item\"><span class=\"card-content\">'+item.content+'</span></li>');
-    } else {
-          $('#sortable'+listNumber).append('<li style=\"background-color: hsl(202, 100%, 58%)\" class=\"list-item\">'+item.content+'</li>');
-    }
-  });
+  if (initData[listNumber]){
+    initData[listNumber].body.forEach(function(item){
+      if (item.order < 10) {
+      $('#sortable'+listNumber).append('<li style=\"background-color: hsl(202, 100%,'+(38+item.order*2)+'%)\" class=\"list-item\"><span class=\"card-content\">'+item.content+'</span></li>');
+      } else {
+            $('#sortable'+listNumber).append('<li style=\"background-color: hsl(202, 100%, 58%)\" class=\"list-item\">'+item.content+'</li>');
+      }
+    });
+  } else {
+    console.log('data is off');
+  }
 }
 
 function init (){
@@ -206,6 +210,8 @@ function listsDropDown() {
   optionsArr.forEach(function (item, index){
     if (state[index]){
       $('.selectList'+index+' option[value='+index+']').attr("selected", "selected");
+    } else {
+      console.log('state says 0')
     }
   });
 
@@ -234,13 +240,13 @@ $(document).on("change", "select", function() {
       var removedValue = initData.splice(listNum, 1, initData[insertedData]);
 
       if (removedValue[0].order < 2){
-
-        initData.splice(initData[insertedData].order, 1,removedValue[0]);
+        console.log('does this work?');
+        initData.splice(initData[insertedData].order, 0,removedValue[0]);
         stateCheck();
       } else {
         console.log('edit this');
-      initData.splice(initData[insertedData].order, 1,removedValue[0]);
-      stateCheck();
+        initData.splice(initData[insertedData].order, 0,removedValue[0]);
+        stateCheck();
       }
       stateCheck();
       $('.list-wrapper').remove();
