@@ -74,10 +74,11 @@ function createLists(callback){
      .append(
      '<div class=\"list-wrapper list-num'+list.order+'\"><ul id=\"sortable'+list.order+'\" class=\"connectedSortable\"><div class=\"list-title\"><select class=\"selectList'+list.order+' options\"><option value="-1" selected>Choose a list...</option></select><div class="new-list inline-list">+ New List</div></div></ul></div>');
     createListItems(list.order);
+    if (state[index])initCardComment(list.order);
     }
     });
   listsDropDown();
-  initCardComment();
+
   if (callback){callback();}
   return true;
 }
@@ -135,7 +136,9 @@ function updateData(event, ui){
   });
   updateLocalStorage();
   lists.forEach(function(item, index){
+    if (state[index]){
     createListItems(index);
+  }
   });
 
 }
@@ -259,8 +262,8 @@ $(document).on("change", "select", function() {
 ***********/
 
 var addCard = '<textarea class="add-card" placeholder="Write an item..."></textarea>'
-function initCardComment(){
-  $('.connectedSortable').after(addCard);
+function initCardComment(listNum){
+  $('#sortable'+listNum).after(addCard);
   // what's this line of code doing?
   $('input[type="text"]').mousedown(function(e){ e.stopPropagation(); });
 
@@ -310,7 +313,7 @@ function addCardFunc (list) {
   updateLocalStorage();
 }
 
-initCardComment();
+for (var x = 0; x < 3; x++){initCardComment(x)};
 
 //localStorage.setItem('trello-data', initData);
 //console.log( localStorage.getItem("trello-data") );
