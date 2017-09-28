@@ -1,3 +1,5 @@
+// init state
+var state = [1,1,1]
 // initialize data
 
 if (localStorage.getItem("trello-data")){
@@ -67,6 +69,7 @@ updateLocalStorage();
 function createLists(callback){
   initData.map(function (list,index) {
     if (index < 3){
+      //console.log('create lists...', $('.selectList'+index));
     $('#container')
      .append(
      '<div class=\"list-wrapper list-num'+list.order+'\"><ul id=\"sortable'+list.order+'\" class=\"connectedSortable\"><div class=\"list-title\"><select class=\"selectList'+list.order+' options\"><option value="-1" selected>Choose a list...</option></select><div class="new-list inline-list">+ New List</div></div></ul></div>');
@@ -84,7 +87,7 @@ function createListItems(listNumber){
 
   initData[listNumber].body.forEach(function(item){
     if (item.order < 10) {
-    $('#sortable'+listNumber).append('<li style=\"background-color: hsl(202, 100%,'+(38+item.order*2)+'%)\" class=\"list-item\">'+item.content+'</li>');
+    $('#sortable'+listNumber).append('<li style=\"background-color: hsl(202, 100%,'+(38+item.order*2)+'%)\" class=\"list-item\"><span class=\"card-content\">'+item.content+'</span></li>');
     } else {
           $('#sortable'+listNumber).append('<li style=\"background-color: hsl(202, 100%, 58%)\" class=\"list-item\">'+item.content+'</li>');
     }
@@ -106,7 +109,7 @@ function init (){
           },
        cancel: '.list-title',
       connectWith: ".connectedSortable"
-    }).disableSelection();
+    });
 
   });
 }
@@ -168,6 +171,7 @@ function addList(list) {
     item.order = index;
   });
   console.log('new initData...', initData);
+  stateCheck();
   $('.list-wrapper').remove();
   updateLocalStorage();
   createLists(init);
@@ -196,7 +200,9 @@ function listsDropDown() {
   });
   optionsArr = [].slice.call(optionsArr);
   optionsArr.forEach(function (item, index){
-    $('.selectList'+index+' option[value='+index+']').attr("selected", "selected");
+    if (state[index]){
+      $('.selectList'+index+' option[value='+index+']').attr("selected", "selected");
+    }
   });
 
 }
@@ -211,7 +217,7 @@ $(document).on("change", "select", function() {
   console.log('listValInData is...', listValInData);
   if (listValInData == -1){
     console.log('choose a list...');
-          $('.list-num'+listNum).find('li').remove();
+    $('.list-num'+listNum).find('li').remove();
     $('.list-num'+listNum).find('.add-card').remove();
   } else if (listNum === listValInData) {
       createListItems(listValInData);
@@ -230,6 +236,7 @@ $(document).on("change", "select", function() {
 
       }
       console.log('removed value...', removedValue);
+      stateCheck();
       $('.list-wrapper').remove();
       initData.forEach(function(item, index){
         item.order = index;
@@ -254,6 +261,7 @@ $(document).on("change", "select", function() {
 var addCard = '<textarea class="add-card" placeholder="Write an item..."></textarea>'
 function initCardComment(){
   $('.connectedSortable').after(addCard);
+  // what's this line of code doing?
   $('input[type="text"]').mousedown(function(e){ e.stopPropagation(); });
 
   function getCaret(el) {
@@ -316,24 +324,68 @@ function updateLocalStorage(){
 /*
 * Double click to edit card
 ***********/
-$('.list-item').click(function(){
-    var name = $(this).text();
-    $(this).html('');
-    $('<input></input>')
-        .attr({
-            'type': 'text',
-            'name': 'fname',
-            'id': 'txt_fullname',
-            'size': '30',
-            'value': name
-        })
-        .appendTo(this);
-    $('#txt_fullname').focus();
-});
+function editListItem(){
+  $(':focus').blur();
 
-$(document).on('blur','#txt_fullname', function(){
+
+  var name = $(this).text();
+  $(this).html('');
+  $('<textarea>'+name+'</textarea>')
+      .attr({
+          'type': 'text',
+          'name': 'fname',
+          'class': 'txt_fullname',
+
+      })
+      .appendTo(this);
+  $('.txt_fullname').focus().val('').val(name).select();
+
+  $('.txt_fullname').on('keyup', function(e) {
+    if (e.keyCode == 13){
+      if (event.shiftKey) {
+        console.log('shift key');
+      } else {
+        this.blur();
+        // TODO: save data
+      }
+
+    }
+  });
+}
+
+$(document).on('click', '.card-content', editListItem);
+
+$(document).on('blur','.txt_fullname', function(){
+  if ($(this).val()===''){
+    $(this).parent().parent().remove();
+    // remember to save
+  }
+  $(this).parent().text($(this).val());
+
+
+/*  if ($(this).val()){
     var name = $(this).val();
     //alert('Make an AJAX call and pass this parameter >> name=' + name);
     //$(this).text(name);
     $(this).parent().text(name);
+  } else {
+$(this).parent().text('name');
+    // alert('Are you sure you want to delete this?');
+  }*/
 });
+
+
+/*
+* Handle ctrl + Z & ctrl + shift + Z
+**********/
+
+// check if 'choose a list' is selected
+function stateCheck(){
+  for (var x = 0; x < 3; x++){
+    if ($('.selectList'+x).val() == -1){
+        state[x] = 0;
+    } else {
+        state[x] = 1;
+    }
+  }
+}

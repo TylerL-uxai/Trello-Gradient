@@ -3,6 +3,7 @@ html, body {
   height: 100%;
   overflow-x: hidden;
   position:relative;
+  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 
 #content {
@@ -50,9 +51,14 @@ float: left;
     padding: 8px 10px 0px 10px;
     list-style: none;
   margin-bottom: 0px;
+  margin-top: 0px;
 
 }
 
+.options{
+  color: #555;
+  font-weight: bold;
+}
 .list-item {
       background-color: #fff;
     border-bottom: 1px solid #ccc;
@@ -72,6 +78,7 @@ float: left;
 }
 
 select{
+  font-size: 14px;
   width: 100%;
   margin-bottom: 5px;
 }
@@ -132,9 +139,9 @@ textarea {
     display: inline-block;
   }
   .inline-list {
-    color: #8a8a8a;
+    color: #ddd;
     display: inline-block;
-margin-left: 5px;
+    margin-left: 5px;
   }
   .list-wrapper {
     background-color: rgb(0, 121, 191);
