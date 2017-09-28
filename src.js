@@ -68,13 +68,16 @@ updateLocalStorage();
 // create lists
 function createLists(callback){
   initData.map(function (list,index) {
+
     if (index < 3){
       //console.log('create lists...', $('.selectList'+index));
     $('#container')
      .append(
      '<div class=\"list-wrapper list-num'+list.order+'\"><ul id=\"sortable'+list.order+'\" class=\"connectedSortable\"><div class=\"list-title\"><select class=\"selectList'+list.order+' options\"><option value="-1" selected>Choose a list...</option></select><div class="new-list inline-list">+ New List</div></div></ul></div>');
+
     createListItems(list.order);
-    if (state[index])initCardComment(list.order);
+    initCardComment(list.order);
+
     }
     });
   listsDropDown();
@@ -84,8 +87,6 @@ function createLists(callback){
 }
 
 function createListItems(listNumber){
-  console.log('data is...', initData);
-
   initData[listNumber].body.forEach(function(item){
     if (item.order < 10) {
     $('#sortable'+listNumber).append('<li style=\"background-color: hsl(202, 100%,'+(38+item.order*2)+'%)\" class=\"list-item\"><span class=\"card-content\">'+item.content+'</span></li>');
@@ -210,35 +211,37 @@ function listsDropDown() {
 
 }
 $(document).on("change", "select", function() {
-    console.log('change option');
+  stateCheck();
+
     var listValInData = $(this).val();
-    console.log('listValInData', $(this).val());
+
     // list number
     var listNum = $(this).attr("class").split(' ')[0].slice(-1);
-    console.log('List number is...', $(this).attr("class").split(' ')[0].slice(-1));
 
-  console.log('listValInData is...', listValInData);
+
   if (listValInData == -1){
     console.log('choose a list...');
     $('.list-num'+listNum).find('li').remove();
     $('.list-num'+listNum).find('.add-card').remove();
+    stateCheck();
   } else if (listNum === listValInData) {
+    stateCheck();
       createListItems(listValInData);
+      initCardComment(listValInData);
     } else {
-      console.log('initial data before unshift...', initData);
-
+      stateCheck();
       var insertedData = initData[listValInData].order;
-      console.log('inserted Data is...', insertedData);
       var removedValue = initData.splice(listNum, 1, initData[insertedData]);
 
       if (removedValue[0].order < 2){
+
         initData.splice(initData[insertedData].order, 1,removedValue[0]);
-
+        stateCheck();
       } else {
+        console.log('edit this');
       initData.splice(initData[insertedData].order, 1,removedValue[0]);
-
+      stateCheck();
       }
-      console.log('removed value...', removedValue);
       stateCheck();
       $('.list-wrapper').remove();
       initData.forEach(function(item, index){
@@ -263,7 +266,9 @@ $(document).on("change", "select", function() {
 
 var addCard = '<textarea class="add-card" placeholder="Write an item..."></textarea>'
 function initCardComment(listNum){
+  if (state[listNum] == 1){
   $('#sortable'+listNum).after(addCard);
+  }
   // what's this line of code doing?
   $('input[type="text"]').mousedown(function(e){ e.stopPropagation(); });
 
@@ -391,4 +396,5 @@ function stateCheck(){
         state[x] = 1;
     }
   }
+  console.log(state);
 }
