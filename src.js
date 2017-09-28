@@ -2,7 +2,7 @@
 var state = [1,1,1]
 // initialize data
 
-if (localStorage.getItem("trello-data")){
+if (localStorage.getItem("trello-data2")){
   var unparsed = localStorage.getItem("trello-data");
   var initData = JSON.parse(unparsed);
 } else {
@@ -87,7 +87,7 @@ function createLists(callback){
 }
 
 function createListItems(listNumber){
-  if (initData[listNumber]){
+  if (initData[listNumber] && state[listNumber]){
     initData[listNumber].body.forEach(function(item){
       if (item.order < 10) {
       $('#sortable'+listNumber).append('<li style=\"background-color: hsl(202, 100%,'+(38+item.order*2)+'%)\" class=\"list-item\"><span class=\"card-content\">'+item.content+'</span></li>');
@@ -96,7 +96,7 @@ function createListItems(listNumber){
       }
     });
   } else {
-    console.log('data is off');
+    console.log('data or state is off');
   }
 }
 
@@ -239,13 +239,16 @@ $(document).on("change", "select", function() {
       var insertedData = initData[listValInData].order;
       var removedValue = initData.splice(listNum, 1, initData[insertedData]);
 
-      if (removedValue[0].order < 2){
+      if (listValInData < 3){
         console.log('does this work?');
-        initData.splice(initData[insertedData].order, 0,removedValue[0]);
+        console.log('removedValue is...', removedValue[0]);
+        initData.splice(initData[insertedData].order, 1,removedValue[0]);
+        state[listValInData] = 0;
         stateCheck();
       } else {
         console.log('edit this');
-        initData.splice(initData[insertedData].order, 0,removedValue[0]);
+        initData.splice(initData[insertedData].order, 1);
+        initData.splice(3, 0,removedValue[0]);
         stateCheck();
       }
       stateCheck();
