@@ -278,10 +278,10 @@ $(document).on("change", "select", function() {
 * Add cards
 ***********/
 
-var addCard = '<textarea class="add-card" placeholder="Write an item..."></textarea>'
+// var addCard = '<textarea class="add-card" placeholder="Write an item..."></textarea>'
 function initCardComment(listNum){
   if (state[listNum] == 1){
-  $('#sortable'+listNum).after(addCard);
+  $('#sortable'+listNum).after('<textarea class="add-card card-in-list-num'+listNum+'" placeholder="Write an item..."></textarea>');
 
   }
   // what's this line of code doing?
@@ -304,25 +304,26 @@ function initCardComment(listNum){
       return 0;
   }
 
-$('.add-card').keypress(function (e) {
+$('.add-card').unbind('keypress').bind('keypress',function (e) {
   if (e.which == 13) {
     var content = this.value;
-            var caret = getCaret(this);
-            if(event.shiftKey){
-                this.value = content.substring(0, caret - 1) + "\n" + content.substring(caret, content.length);
-                event.stopPropagation();
-            } else {
-    addCardFunc($(this));
-    console.log($(this).parent().attr("class").split(' ')[1].slice(-1));
-
-    return false;}
+    var caret = getCaret(this);
+    if(event.shiftKey){
+      this.value = content.substring(0, caret - 1) + "\n" + content.substring(caret, content.length);
+      event.stopPropagation();
+    } else {
+      addCardFunc($(event.target));
+      return false;
+    }
   }
+
 });
 
 }
 function addCardFunc (list) {
-  var listNum = list.parent().attr("class").split(' ')[1].slice(-1);
+  var listNum = list.attr("class").split(' ')[1].slice(-1);
   var txt = list.val();
+  console.log('listNum', listNum);
   txt = txt.replace(/\r?\n/g, '<br />');
   initData[listNum].body.push({'content': txt});
   initData[listNum].body.forEach(function(item,index){
@@ -333,7 +334,7 @@ function addCardFunc (list) {
   updateLocalStorage();
 }
 
-for (var x = 0; x < 3; x++){initCardComment(x)};
+// for (var x = 0; x < 3; x++){initCardComment(x)};
 
 //localStorage.setItem('trello-data', initData);
 //console.log( localStorage.getItem("trello-data") );
