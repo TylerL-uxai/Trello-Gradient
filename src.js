@@ -1,8 +1,14 @@
+// desktop
+var mobile = ('ontouchstart' in window);
+if (!mobile){
+  $(document.body).addClass('desktop');
+}
+
 // init state
 var state = [1,1,1]
 // initialize data
 
-if (localStorage.getItem("trello-data2")){
+if (localStorage.getItem("trello-data")){
   var unparsed = localStorage.getItem("trello-data");
   var initData = JSON.parse(unparsed);
 } else {
@@ -103,17 +109,19 @@ function createListItems(listNumber){
 function init (){
   $( function() {
     $( '.connectedSortable' ).sortable({
-          receive: function (event, ui) {
+      receive: function (event, ui) {
+        if (this === ui.item.parent()[0]){
+          updateData(event,ui);
+        }
+      },
+
+      update: function (event, ui) {
             if (this === ui.item.parent()[0]){
              updateData(event,ui);
             }
           },
-                update: function (event, ui) {
-            if (this === ui.item.parent()[0]){
-             updateData(event,ui);
-            }
-          },
-       cancel: '.list-title',
+          cancel: '.txt_fullname',
+       handle: '.list-title',
       connectWith: ".connectedSortable"
     });
 
@@ -240,13 +248,10 @@ $(document).on("change", "select", function() {
       var removedValue = initData.splice(listNum, 1, initData[insertedData]);
 
       if (listValInData < 3){
-        console.log('does this work?');
-        console.log('removedValue is...', removedValue[0]);
         initData.splice(initData[insertedData].order, 1,removedValue[0]);
         state[listValInData] = 0;
         stateCheck();
       } else {
-        console.log('edit this');
         initData.splice(initData[insertedData].order, 1);
         initData.splice(3, 0,removedValue[0]);
         stateCheck();
@@ -277,9 +282,10 @@ var addCard = '<textarea class="add-card" placeholder="Write an item..."></texta
 function initCardComment(listNum){
   if (state[listNum] == 1){
   $('#sortable'+listNum).after(addCard);
+
   }
   // what's this line of code doing?
-  $('input[type="text"]').mousedown(function(e){ e.stopPropagation(); });
+  $('input[type="text"]').mousedown(function(e){ e.stopPropagation(); console.log('mousedown'); });
 
   function getCaret(el) {
       if (el.selectionStart) {
@@ -342,7 +348,7 @@ function updateLocalStorage(){
 * Double click to edit card
 ***********/
 function editListItem(){
-  $(':focus').blur();
+  //$(':focus').blur();
 
 
   var name = $(this).text();
@@ -354,21 +360,29 @@ function editListItem(){
           'class': 'txt_fullname',
 
       })
-      .appendTo(this);
-  $('.txt_fullname').focus().val('').val(name).select();
+      .enableSelection().appendTo(this);
 
+  $('.txt_fullname').focus().val('').val(name);
+
+
+//  $('.connectedSortable').sortable({cancel: '.txt_fullname'});
+  //$('.txt-fullname').unbind('mousedown');
+  //$('.txt-fullname').unbind('click');
   $('.txt_fullname').on('keyup', function(e) {
     if (e.keyCode == 13){
       if (event.shiftKey) {
         console.log('shift key');
       } else {
-        this.blur();
+        //this.blur();
         // TODO: save data
       }
 
     }
   });
+  //$( ".txt_fullname").mousedown(function(e) {console.log('mousedown')});
+  //$( ".txt_fullname").click(function(e) {$(this).prop("selected", false);});
 }
+
 
 $(document).on('click', '.card-content', editListItem);
 
