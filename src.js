@@ -430,13 +430,19 @@ function stateCheck(){
 * Search
 **********/
 function search(){
+  var result = new Array();
   var searchValue = $('#search-bar').val();
   for (x in initData) {
-    for (y in initData[x].body){
-      if (initData[x].body[y].content.indexOf(searchValue) > 0 ){
-        console.log(initData[x].body[y].content);
+    var returnArr = initData[x].body.filter(function (el){
+      // console.log(el.content.indexOf(searchValue)  > -1);
+      if (el.content.indexOf(searchValue) > -1) {
+        return el;
       }
-    }
+    });
+    console.log(returnArr);
+    result = result.concat(returnArr);
   }
-  console.log(initData);
+
+  console.log(result);
+  //console.log(initData);
 }
