@@ -330,6 +330,7 @@ function addCardFunc (list) {
     item.order = index;
   });
   $('.list-wrapper').remove();
+  stateCheck();
   createLists(init);
   updateLocalStorage();
 }
