@@ -167,3 +167,11 @@ textarea {
     color: #efefef;
   }
 }
+
+/*
+* Search
+*****************/
+#search-bar-container {
+  width: 100%;
+  padding: 10px;
+}

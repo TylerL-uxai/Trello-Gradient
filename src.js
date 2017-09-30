@@ -8,7 +8,7 @@ if (!mobile){
 var state = [1,1,1]
 // initialize data
 
-if (localStorage.getItem("trello-data")){
+if (localStorage.getItem("trello-data1")){
   var unparsed = localStorage.getItem("trello-data");
   var initData = JSON.parse(unparsed);
 } else {
@@ -138,15 +138,15 @@ function updateData(event, ui){
 
   lists.forEach(function(item, index){
 
-    var listItems = $(item).find('li').toArray();
+    var listItems = $(item).find('span').toArray();
     initData[index].body = [];
     listItems.forEach(function(itm, idx){
-      console.log(itm, item);
       initData[index].body.push({'content':itm.innerHTML, 'order': idx});
-      $(itm).remove();
+      //$(itm).remove();
     });
 
   });
+  $('.list-item').remove();
   updateLocalStorage();
   lists.forEach(function(item, index){
     if (state[index]){
@@ -325,6 +325,7 @@ function addCardFunc (list) {
   var txt = list.val();
   console.log('listNum', listNum);
   txt = txt.replace(/\r?\n/g, '<br />');
+  console.log(txt);
   initData[listNum].body.push({'content': txt});
   initData[listNum].body.forEach(function(item,index){
     item.order = index;
@@ -422,4 +423,20 @@ function stateCheck(){
     }
   }
   console.log(state);
+}
+
+
+/*
+* Search
+**********/
+function search(){
+  var searchValue = $('#search-bar').val();
+  for (x in initData) {
+    for (y in initData[x].body){
+      if (initData[x].body[y].content.indexOf(searchValue) > 0 ){
+        console.log(initData[x].body[y].content);
+      }
+    }
+  }
+  console.log(initData);
 }
