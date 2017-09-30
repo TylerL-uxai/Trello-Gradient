@@ -120,10 +120,10 @@ function init (){
              updateData(event,ui);
             }
           },
-          cancel: '.txt_fullname',
-       handle: '.list-title',
+          cancel: '.txt_fullname, .list-title',
+
       connectWith: ".connectedSortable"
-    });
+    }).disableSelection();
 
   });
 }
@@ -360,7 +360,7 @@ function editListItem(){
           'class': 'txt_fullname',
 
       })
-      .enableSelection().appendTo(this);
+      .appendTo(this);
 
   $('.txt_fullname').focus().val('').val(name);
 
