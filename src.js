@@ -434,15 +434,16 @@ function search(){
   var searchValue = $('#search-bar').val();
   for (x in initData) {
     var returnArr = initData[x].body.filter(function (el){
-      // console.log(el.content.indexOf(searchValue)  > -1);
       if (el.content.indexOf(searchValue) > -1) {
         return el;
       }
     });
-    console.log(returnArr);
+
     result = result.concat(returnArr);
   }
-
-  console.log(result);
-  //console.log(initData);
+  var resultHTML = result.map(function(item, index){
+    return "<li>"+item.content+"</li>";
+  })
+  resultHTML = resultHTML.join("");
+  $('#sidebar').html('<ul>'+resultHTML+'</ul>');
 }
