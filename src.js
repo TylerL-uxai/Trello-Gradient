@@ -272,12 +272,12 @@ console.log('this.val() is: ', $(this));
 
       createLists(init);
       if (listValInData < 3){
-        $('.list-num'+listValInData).after('<div class=\"list-wrapper list-num'+listValInData+' placeholder\"><div class=\"list-title\"><select class=\"select-list'+listValInData+' options\"><option value="-1" selected>Choose a list...</option></select></div><ul id=\"sortable'+listValInData+'\" class=\"connectedSortable\"></ul></div>');
+        $('.list-num'+listValInData).after('<div class=\"list-wrapper list-num'+listValInData+' placeholder\"><div class=\"list-title list-title-in-list-num'+listValInData+'\"><select class=\"select-list'+listValInData+' options\"><option value="-1" selected>Choose a list...</option></select></div><ul id=\"sortable'+listValInData+'\" class=\"connectedSortable\"></ul></div>');
         $.each(initData, function(){
           $('.select-list'+listValInData).append(new Option(this.title, this.order));
         });
         $('.list-wrapper').get(listValInData).remove();
-
+        makeTitleDroppable();
       }
      }
   });
@@ -462,12 +462,18 @@ function search(){
 function makeTitleDroppable(){
   $('.list-title').droppable({
     drop: function(event, ui){
+	    // allow current jQuery UI code to finish runing, then cancel
+	    setTimeout(function() {
+		      $(".connectedSortable").sortable('cancel');
+	    }, 0);
+
 
       console.log('dropped!');
-      console.log(event);
+      var targetListNum = $(this).attr('class').split(" ")[1].slice(-1);
+      console.log($(this).attr('class').split(" ")[1].slice(-1));
       console.log(ui);
       // $('.select-list1').trigger( "open" );
-      var $target = $(".select-list1");
+      var $target = $(".select-list"+targetListNum);
       var $clone = $target.clone().removeAttr('id');
       $clone.val($target.val()).css({
           overflow: "auto",

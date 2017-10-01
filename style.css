@@ -48,7 +48,7 @@ float: left;
     flex-direction: column;
 
     position: relative;
-    padding: 8px 10px 0px 10px;
+    padding: 0px 10px 0px 10px;
     list-style: none;
   margin-bottom: 0px;
   margin-top: 0px;
@@ -57,7 +57,7 @@ float: left;
 
 .list-title {
   padding: 10px;
-  padding-bottom: 0px;
+  padding-bottom: 7px;
 }
 
 .options{
