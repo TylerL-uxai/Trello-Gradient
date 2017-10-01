@@ -78,10 +78,9 @@ function createLists(callback){
   initData.map(function (list,index) {
     initData[index].order = index;
     if (index < 3){
-      //console.log('create lists...', $('.selectList'+index));
     $('#container')
      .append(
-     '<div class=\"list-wrapper list-num'+list.order+'\"><ul id=\"sortable'+list.order+'\" class=\"connectedSortable\"><div class=\"list-title\"><select class=\"selectList'+list.order+' options\"><option value="-1" selected>Choose a list...</option></select><div class="new-list btn-in-list'+list.order+' inline-list">+ New List</div></div></ul></div>');
+     '<div class=\"list-wrapper list-num'+list.order+'\"><div class=\"list-title list-title-in-list-num'+list.order+'\"><select class=\"select-list'+list.order+' options\"><option value="-1" selected>Choose a list...</option></select><div class="new-list btn-in-list'+list.order+' inline-list">+ New List</div></div><ul id=\"sortable'+list.order+'\" class=\"connectedSortable\"></ul></div>');
      console.log('list order...', list.order);
     createListItems(index);
     initCardComment(index);
@@ -224,7 +223,7 @@ function listsDropDown() {
   optionsArr = [].slice.call(optionsArr);
   optionsArr.forEach(function (item, index){
     if (state[index]){
-      $('.selectList'+index+' option[value='+index+']').attr("selected", "selected");
+      $('.select-list'+index+' option[value='+index+']').attr("selected", "selected");
     } else {
       console.log('state says 0')
     }
@@ -272,9 +271,9 @@ $(document).on("change", "select", function() {
 
       createLists(init);
       if (listValInData < 3){
-        $('.list-num'+listValInData).after('<div class=\"list-wrapper list-num'+listValInData+' placeholder\"><ul id=\"sortable'+listValInData+'\" class=\"connectedSortable\"><div class=\"list-title\"><select class=\"selectList'+listValInData+' options\"><option value="-1" selected>Choose a list...</option></select></div></ul></div>');
+        $('.list-num'+listValInData).after('<div class=\"list-wrapper list-num'+listValInData+' placeholder\"><div class=\"list-title\"><select class=\"select-list'+listValInData+' options\"><option value="-1" selected>Choose a list...</option></select></div><ul id=\"sortable'+listValInData+'\" class=\"connectedSortable\"></ul></div>');
         $.each(initData, function(){
-          $('.selectList'+listValInData).append(new Option(this.title, this.order));
+          $('.select-list'+listValInData).append(new Option(this.title, this.order));
         });
         $('.list-wrapper').get(listValInData).remove();
 
@@ -424,7 +423,7 @@ $(this).parent().text('name');
 // check if 'choose a list' is selected
 function stateCheck(){
   for (var x = 0; x < 3; x++){
-    if ($('.selectList'+x).val() == -1){
+    if ($('.select-list'+x).val() == -1){
         state[x] = 0;
     } else {
         state[x] = 1;
@@ -455,3 +454,32 @@ function search(){
   resultHTML = resultHTML.join("");
   $('#sidebar').html('<ul>'+resultHTML+'</ul>');
 }
+
+/*
+* Drop to another list
+***************/
+$('.list-title').droppable({
+  drop: function(event, ui){
+    console.log('dropped!');
+    console.log(event);
+    console.log(ui);
+    // $('.select-list1').trigger( "open" );
+    var $target = $(".select-list1");
+    var $clone = $target.clone().removeAttr('id');
+    $clone.val($target.val()).css({
+        overflow: "auto",
+        position: 'absolute',
+        'z-index': 999,
+        left: $target.offset().left,
+        top: $target.offset().top + $target.outerHeight(),
+        width: $target.outerWidth()
+    }).attr('size', $clone.find('option').length > 10 ? 10 : $clone.find('option').length).change(function() {
+        $target.val($clone.val());
+    }).on('click blur keypress',function(e) {
+     if(e.type !== "keypress" || e.which === 13)
+        $(this).remove();
+    });
+    $('body').append($clone);
+    $clone.focus();
+  }
+});
