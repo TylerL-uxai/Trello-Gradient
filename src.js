@@ -68,18 +68,20 @@ var initData = [{
   ]
 }];
 }
+
 console.log(initData);
 updateLocalStorage();
 
 // create lists
 function createLists(callback){
+  if (initData.length > 0){
   initData.map(function (list,index) {
     initData[index].order = index;
     if (index < 3){
       //console.log('create lists...', $('.selectList'+index));
     $('#container')
      .append(
-     '<div class=\"list-wrapper list-num'+list.order+'\"><ul id=\"sortable'+list.order+'\" class=\"connectedSortable\"><div class=\"list-title\"><select class=\"selectList'+list.order+' options\"><option value="-1" selected>Choose a list...</option></select><div class="new-list inline-list">+ New List</div></div></ul></div>');
+     '<div class=\"list-wrapper list-num'+list.order+'\"><ul id=\"sortable'+list.order+'\" class=\"connectedSortable\"><div class=\"list-title\"><select class=\"selectList'+list.order+' options\"><option value="-1" selected>Choose a list...</option></select><div class="new-list btn-in-list'+list.order+' inline-list">+ New List</div></div></ul></div>');
      console.log('list order...', list.order);
     createListItems(index);
     initCardComment(index);
@@ -90,6 +92,10 @@ function createLists(callback){
 
   if (callback){callback();}
   return true;
+} else {
+  console.log('no data');
+  $('#container').html('<div class="new-list-no-data">+ New List</div>')
+}
 }
 
 function createListItems(listNumber){
@@ -194,15 +200,16 @@ function addList(list) {
 }
 
 $(document).on('click', '.new-list', newListInput);
+$(document).on('click', '.new-list-no-data', newListInputNoInitData);
 
 function newListInput(list){
-  if ($('.list-num0')) {
-    $('.list-num0').html(newListBox);
+  var inListNum = $(list.target).attr('class').split(' ')[1].slice(-1);
+    $('.list-num'+inListNum).html(newListBox);
     watchNewListInput();
-  } else {
-    $('#container').append(newListBox);
+}
+function newListInputNoInitData(list){
+    $('#container').html(newListBox);
     watchNewListInput();
-  }
 }
 /*
 * List Dropdown
@@ -334,6 +341,7 @@ function addCardFunc (list) {
   stateCheck();
   createLists(init);
   updateLocalStorage();
+  $('.card-in-list-num'+listNum).focus();
 }
 
 // for (var x = 0; x < 3; x++){initCardComment(x)};

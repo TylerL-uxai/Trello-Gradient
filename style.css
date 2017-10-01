@@ -79,12 +79,16 @@ float: left;
 
 select{
   font-size: 14px;
-  width: 100%;
+  width: 70%;
   margin-bottom: 5px;
 }
 
 .inline-list {
-  display: none;
+  display: inline-block;
+  font-size: 12px;
+  margin-top: 2px;
+  float: right;
+  color: #888;
 }
 /*
 * Cards
@@ -112,6 +116,13 @@ textarea {
   -webkit-user-select: text;
   -ms-user-select: text;
   user-select: text;
+}
+
+#sidebar {
+  display: none;
+}
+#search-bar-container {
+  display: none;
 }
 @media only screen and (max-width: 900px) {
   #container{
