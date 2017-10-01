@@ -115,8 +115,9 @@ function init (){
   $( function() {
     $( '.connectedSortable' ).sortable({
       receive: function (event, ui) {
+        console.log('receive (this):', ui);
         if (this === ui.item.parent()[0]){
-          if (this.hasClass('hover')){
+          if (ui.item.hasClass('hover')){
             updateData(event,ui);
           }
         }
