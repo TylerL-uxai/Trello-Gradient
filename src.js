@@ -116,7 +116,9 @@ function init (){
     $( '.connectedSortable' ).sortable({
       receive: function (event, ui) {
         if (this === ui.item.parent()[0]){
-          updateData(event,ui);
+          if (this.hasClass('hover')){
+            updateData(event,ui);
+          }
         }
       },
 
@@ -126,7 +128,9 @@ function init (){
             }
           },
           cancel: '.txt_fullname, .list-title',
-
+          over: function(event,ui){
+            $(this).addClass('hover');
+          },
       connectWith: ".connectedSortable"
     }).disableSelection();
 
@@ -463,7 +467,9 @@ function makeTitleDroppable(){
   $('.list-title').droppable({
     drop: function(event, ui){
 	    // allow current jQuery UI code to finish runing, then cancel
-	    setTimeout(function() {
+      $(".sortable li").removeClass('hover');
+      //$(".connectedSortable").sortable('cancel');
+      setTimeout(function() {
 		      $(".connectedSortable").sortable('cancel');
 	    }, 0);
 
