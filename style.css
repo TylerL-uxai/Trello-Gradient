@@ -55,6 +55,11 @@ float: left;
 
 }
 
+.list-title {
+  padding: 10px;
+  padding-bottom: 0px;
+}
+
 .options{
   color: #555;
   font-weight: bold;
