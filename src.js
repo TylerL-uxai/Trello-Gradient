@@ -101,9 +101,9 @@ function createListItems(listNumber){
   if (initData[listNumber] && state[listNumber]){
     initData[listNumber].body.forEach(function(item){
       if (item.order < 10) {
-      $('#sortable'+listNumber).append('<li style=\"background-color: hsl(202, 100%,'+(38+item.order*2)+'%)\" class=\"list-item\"><span class=\"card-content\">'+item.content+'</span></li>');
+      $('#sortable'+listNumber).append('<li style=\"background-color: hsl(202, 100%,'+(38+item.order*2)+'%)\" class=\"list-item list-item-order'+item.order+'\"><span class=\"card-content\">'+item.content+'</span></li>');
       } else {
-            $('#sortable'+listNumber).append('<li style=\"background-color: hsl(202, 100%, 58%)\" class=\"list-item\">'+item.content+'</li>');
+            $('#sortable'+listNumber).append('<li style=\"background-color: hsl(202, 100%, 58%)\" class=\"list-item list-item-order'+item.order+'\">'+item.content+'</li>');
       }
     });
   } else {
@@ -111,15 +111,15 @@ function createListItems(listNumber){
   }
 }
 
+var outside = false;
+
 function init (){
   $( function() {
     $( '.connectedSortable' ).sortable({
+
       receive: function (event, ui) {
-        console.log('receive (this):', ui);
         if (this === ui.item.parent()[0]){
-          if (ui.item.hasClass('hover')){
-            updateData(event,ui);
-          }
+          updateData(event,ui);
         }
       },
 
@@ -128,11 +128,34 @@ function init (){
              updateData(event,ui);
             }
           },
-          cancel: '.txt_fullname, .list-title',
-          over: function(event,ui){
-            $(this).addClass('hover');
-          },
-      connectWith: ".connectedSortable"
+
+      cancel: '.txt_fullname, .list-title',
+
+      beforeStop: function(event, ui){
+        if (outside){
+        console.log ('outside');
+          // return to original position
+          $(this).sortable('cancel'); // causes known error. Hasn't been fixed in over a decade.
+        }
+
+      },
+
+      over: function (event, ui) {
+          outside = false;
+      },
+      out: function (event, ui) {
+          outside = true;
+      },
+
+      /*sort: function(event, ui) {      // another outside drop zone fix that can cause bugs
+      	if (outside) {
+    	    // allow current jQuery UI code to finish runing, then cancel
+    	    setTimeout(function() {
+        		$(this).sortable('cancel');
+    	    }, 0);
+      	}
+      },*/
+      connectWith: ".connectedSortable",
     }).disableSelection();
 
   });
@@ -467,21 +490,19 @@ function search(){
 function makeTitleDroppable(){
   $('.list-title').droppable({
     drop: function(event, ui){
-	    // allow current jQuery UI code to finish runing, then cancel
-      $(".sortable li").removeClass('hover');
-      //$(".connectedSortable").sortable('cancel');
-      setTimeout(function() {
-		      $(".connectedSortable").sortable('cancel');
-	    }, 0);
+      console.log($(".ui-sortable-helper"));
+      $(".ui-sortable-helper").removeClass('hover');
 
+      console.log('dropped!', $(".ui-sortable-helper").attr('class').split(" ")[1].slice(-1));
 
-      console.log('dropped!');
       var targetListNum = $(this).attr('class').split(" ")[1].slice(-1);
+      var itemOrder = $(".ui-sortable-helper").attr('class').split(" ")[1].slice(-1);
       console.log($(this).attr('class').split(" ")[1].slice(-1));
       console.log(ui);
       // $('.select-list1').trigger( "open" );
       var $target = $(".select-list"+targetListNum);
       var $clone = $target.clone().removeAttr('id');
+      $(document).off('change', "select");
       $clone.val($target.val()).css({
           overflow: "auto",
           position: 'absolute',
@@ -490,10 +511,18 @@ function makeTitleDroppable(){
           top: $target.offset().top + $target.outerHeight(),
           width: $target.outerWidth()
       }).attr('size', $clone.find('option').length > 10 ? 10 : $clone.find('option').length).change(function() {
+        console.log('ui is', ui);
+          $('#sortable'+$clone.val()).prepend(ui.draggable);
           $target.val($clone.val());
+          // update data
+          console.log('sortable+', $clone.val());
+
+          //updateData();
+          //sendListItem(targetListNum, itemOrder);
       }).on('click blur keypress',function(e) {
-       if(e.type !== "keypress" || e.which === 13)
+       if(e.type !== "keypress" || e.which === 13){
           $(this).remove();
+        }
       });
       $('body').append($clone);
       $clone.focus();
