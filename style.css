@@ -81,7 +81,9 @@ float: left;
     text-shadow: 0 1px 1px rgba(0,0,0,0.3);
   font-weight: normal;
 }
-
+.hidden-state {
+  visibility: hidden;
+}
 select{
   font-size: 14px;
   width: 70%;

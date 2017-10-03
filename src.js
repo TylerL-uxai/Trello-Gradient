@@ -8,7 +8,7 @@ if (!mobile){
 var state = [1,1,1]
 // initialize data
 
-if (localStorage.getItem("trello-data1")){
+if (localStorage.getItem("trello-data")){
   var unparsed = localStorage.getItem("trello-data");
   var initData = JSON.parse(unparsed);
 } else {
@@ -98,12 +98,17 @@ function createLists(callback){
 }
 
 function createListItems(listNumber){
-  if (initData[listNumber] && state[listNumber]){
-    initData[listNumber].body.forEach(function(item){
+  if (initData[listNumber]){
+    initData[listNumber].body.forEach(function(item,index){
+      $('#sortable'+listNumber).removeClass('hidden-state');
       if (item.order < 10) {
       $('#sortable'+listNumber).append('<li style=\"background-color: hsl(202, 100%,'+(38+item.order*2)+'%)\" class=\"list-item list-item-order'+item.order+'\"><span class=\"card-content\">'+item.content+'</span></li>');
       } else {
             $('#sortable'+listNumber).append('<li style=\"background-color: hsl(202, 100%, 58%)\" class=\"list-item list-item-order'+item.order+'\">'+item.content+'</li>');
+      }
+
+      if (state[index] === 0 ){
+        $('#sortable'+listNumber).addClass('hidden-state');
       }
     });
   } else {
@@ -519,7 +524,7 @@ function makeTitleDroppable(){
               //$target.val($clone.val());
           // update data
           console.log('sortable+', $clone.val());
-
+          updateData();
           setTimeout(function() {
             $(document).on('change', "select", selectChange);
           }, 0);
