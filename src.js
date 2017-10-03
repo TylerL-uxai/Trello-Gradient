@@ -259,7 +259,9 @@ function listsDropDown() {
   });
 
 }
-$(document).on("change", "select", function() {
+$(document).on("change", "select", selectChange);
+
+function selectChange() {
   stateCheck();
 
     var listValInData = $(this).val();
@@ -308,7 +310,7 @@ console.log('this.val() is: ', $(this));
         makeTitleDroppable();
       }
      }
-  });
+  }
 /*
 * Add cards
 ***********/
@@ -514,10 +516,14 @@ function makeTitleDroppable(){
         console.log('ui is', ui);
 
           $('#sortable'+$clone.val()).prepend(ui.draggable);
-              $target.val($clone.val());
+              //$target.val($clone.val());
           // update data
           console.log('sortable+', $clone.val());
 
+          setTimeout(function() {
+            $(document).on('change', "select", selectChange);
+          }, 0);
+          //$(document).on('change', "select", selectChange);
           //updateData();
           //sendListItem(targetListNum, itemOrder);
       }).on('click blur keypress',function(e) {
