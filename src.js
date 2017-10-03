@@ -102,9 +102,9 @@ function createListItems(listNumber){
     initData[listNumber].body.forEach(function(item,index){
       $('#sortable'+listNumber).removeClass('hidden-state');
       if (item.order < 10) {
-      $('#sortable'+listNumber).append('<li style=\"background-color: hsl(202, 100%,'+(38+item.order*2)+'%)\" class=\"list-item list-item-order'+item.order+'\"><span class=\"card-content\">'+item.content+'</span></li>');
+      $('#sortable'+listNumber).append('<li style=\"background-color: hsl(202, 100%,'+(38+item.order*2)+'%)\" class=\"list-item list-item-order'+item.order+' list-item-in-list'+listNumber+'\"><span class=\"card-content\">'+item.content+'</span></li>');
       } else {
-            $('#sortable'+listNumber).append('<li style=\"background-color: hsl(202, 100%, 58%)\" class=\"list-item list-item-order'+item.order+'\">'+item.content+'</li>');
+            $('#sortable'+listNumber).append('<li style=\"background-color: hsl(202, 100%, 58%)\" class=\"list-item list-item-order'+item.order+' list-item-in-list'+listNumber+'\">'+item.content+'</li>');
       }
 
       if (state[index] === 0 ){
@@ -519,12 +519,29 @@ function makeTitleDroppable(){
           width: $target.outerWidth()
       }).attr('size', $clone.find('option').length > 10 ? 10 : $clone.find('option').length).change(function() {
         console.log('ui is', ui);
-
-          $('#sortable'+$clone.val()).append(ui.draggable);
+        var uiListNum = ui.draggable.attr('class').split(' ')[2].slice(-1);
+        var uiOrderNum = ui.draggable.attr('class').split(' ')[1].slice(-1);
+        console.log('ui listNumber is', ui.draggable.attr('class').split(' ')[2].slice(-1));
+        console.log('ui order is', ui.draggable.attr('class').split(' ')[1].slice(-1));
+        console.log('initdata for ui is', initData[uiListNum].body[uiOrderNum]);
+        initData[$clone.val()].body.push(initData[uiListNum].body[uiOrderNum]);
+        initData[uiListNum].body.splice(uiOrderNum, 1);
+        initData[$clone.val()].body.forEach(function(item,index){
+          item.order = index;
+        });
+        initData[uiListNum].body.forEach(function(item,index){
+          item.order = index;
+        });
+        $('.list-wrapper').remove();
+        stateCheck();
+        createLists(init);
+        updateLocalStorage();
+        console.log('data after push', initData);
+          //$('#sortable'+$clone.val()).append(ui.draggable);
               //$target.val($clone.val());
           // update data
           console.log('sortable+', $clone.val());
-          // updateData();
+          //updateData();
           setTimeout(function() {
             $(document).on('change', "select", selectChange);
           }, 0);
