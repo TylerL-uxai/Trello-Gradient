@@ -5,10 +5,10 @@ if (!mobile){
 }
 
 // init state
-var state = [1,1,1]
+const state = [1,1,1]
 // initialize data
 
-if (localStorage.getItem("trello-data")){
+if (localStorage.getItem("trello-data1")){
   var unparsed = localStorage.getItem("trello-data");
   var initData = JSON.parse(unparsed);
 } else {
@@ -174,7 +174,7 @@ createLists(function(){
 function updateData(event, ui){
 
   var lists = $('.connectedSortable').toArray();
-
+  console.log('init data before update', initData);
   lists.forEach(function(item, index){
 
     var listItems = $(item).find('span').toArray();
@@ -192,7 +192,7 @@ function updateData(event, ui){
     createListItems(index);
   }
   });
-
+  console.log('initData after update', initData);
 }
 
 /*
@@ -520,11 +520,11 @@ function makeTitleDroppable(){
       }).attr('size', $clone.find('option').length > 10 ? 10 : $clone.find('option').length).change(function() {
         console.log('ui is', ui);
 
-          $('#sortable'+$clone.val()).prepend(ui.draggable);
+          $('#sortable'+$clone.val()).append(ui.draggable);
               //$target.val($clone.val());
           // update data
           console.log('sortable+', $clone.val());
-          updateData();
+          // updateData();
           setTimeout(function() {
             $(document).on('change', "select", selectChange);
           }, 0);
