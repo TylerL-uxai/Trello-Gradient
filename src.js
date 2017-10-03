@@ -503,7 +503,7 @@ function makeTitleDroppable(){
       var $target = $(".select-list"+targetListNum);
       var $clone = $target.clone().removeAttr('id');
       $(document).off('change', "select");
-      $clone.val($target.val()).css({
+      $clone.val(-1).css({
           overflow: "auto",
           position: 'absolute',
           'z-index': 999,
@@ -512,8 +512,9 @@ function makeTitleDroppable(){
           width: $target.outerWidth()
       }).attr('size', $clone.find('option').length > 10 ? 10 : $clone.find('option').length).change(function() {
         console.log('ui is', ui);
+
           $('#sortable'+$clone.val()).prepend(ui.draggable);
-          $target.val($clone.val());
+              $target.val($clone.val());
           // update data
           console.log('sortable+', $clone.val());
 
